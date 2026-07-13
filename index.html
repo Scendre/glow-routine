@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Glow">
+<meta name="theme-color" content="#FBD8D2">
+<title>Ma routine glow</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    color-scheme: light;
+    --bg1:#FBD8D2; --bg2:#E7D3F2; --bg3:#F7DCEA;
+    --win:#FFF6FA; --line:#EBDAEE;
+    --peach:#F0998A; --peach-soft:#FCE4DC; --peach-ink:#C56A5B;
+    --pink:#EF8FBE; --pink-soft:#FCE0EE;
+    --lilac:#B29BDD; --lilac-soft:#ECE3F8; --lilac-ink:#6E58A6;
+    --purple:#7D63B6; --purple-deep:#5B478E;
+    --ink:#6A5A7E; --ink-soft:#A996BA;
+    --shadow:0 14px 30px -14px rgba(120,80,130,.45);
+    --shadow-sm:0 6px 14px -8px rgba(120,80,130,.5);
+  }
+  body{ font-family:system-ui,-apple-system,sans-serif; color:var(--ink);
+    background:radial-gradient(120% 80% at 15% 0%, var(--bg3), transparent 60%),linear-gradient(160deg, var(--bg1), var(--bg2));
+    background-attachment:fixed; min-height:100vh; padding:16px 12px 34px; -webkit-font-smoothing:antialiased; position:relative; overflow-x:hidden; }
+  body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.10;
+    background-image:linear-gradient(var(--lilac) 1px,transparent 1px),linear-gradient(90deg,var(--lilac) 1px,transparent 1px);
+    background-size:26px 26px; -webkit-mask:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent); mask:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent); }
+  .rounded{ font-family:ui-rounded,"SF Pro Rounded",system-ui,sans-serif; }
+  .wrap{ max-width:440px; margin:0 auto; position:relative; z-index:1; }
+  .spark{ position:absolute; z-index:0; pointer-events:none; color:var(--pink); opacity:.55; font-size:16px; }
+  .window{ background:var(--win); border:2px solid #fff; border-radius:26px; box-shadow:var(--shadow); overflow:hidden; }
+  .titlebar{ display:flex; align-items:center; gap:9px; padding:11px 14px; background:linear-gradient(90deg,var(--peach-soft),var(--pink-soft)); border-bottom:2px solid #fff; }
+  .dots{ display:flex; gap:5px; } .dots i{ width:11px; height:11px; border-radius:50%; display:block; }
+  .dots i:nth-child(1){ background:var(--peach); } .dots i:nth-child(2){ background:var(--pink); } .dots i:nth-child(3){ background:var(--lilac); }
+  .wtitle{ flex:1; text-align:center; font-weight:800; font-size:14px; letter-spacing:.06em; color:var(--purple); }
+  .wbtns{ color:var(--ink-soft); font-size:12px; letter-spacing:2px; font-weight:800; }
+  .winbody{ padding:16px 15px 18px; }
+  .hero{ text-align:center; padding:6px 0 12px; }
+  .hero .eyebrow{ font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--pink); font-weight:800; }
+  .hero h1{ font-size:34px; font-weight:800; color:var(--purple); text-transform:uppercase; text-shadow:2.5px 2.5px 0 var(--peach-soft); margin-top:2px; }
+  .hero .today{ display:inline-block; margin-top:8px; font-size:12.5px; font-weight:700; color:var(--purple-deep); background:#fff; padding:5px 14px; border-radius:999px; box-shadow:var(--shadow-sm); text-transform:capitalize; }
+  .hero .today .ap{ color:var(--pink); font-weight:800; text-transform:none; }
+  .tabs{ display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin:14px 0 4px; }
+  .tab{ border:2px solid var(--lilac-soft); background:#fff; color:var(--ink-soft); font-family:ui-rounded,system-ui; font-weight:800; font-size:13px; width:38px; height:38px; border-radius:12px; cursor:pointer; transition:transform .12s; }
+  .tab.today{ border-color:var(--peach); color:var(--peach-ink); }
+  .tab.active{ background:var(--purple); border-color:var(--purple); color:#fff; }
+  .tab:active{ transform:scale(.9); }
+  .card{ border:2px solid #fff; border-radius:22px; box-shadow:var(--shadow-sm); padding:6px 12px 14px; margin-top:16px; }
+  .card.m{ background:linear-gradient(180deg,var(--peach-soft),#FFF7F3); }
+  .card.s{ background:linear-gradient(180deg,var(--lilac-soft),#F9F6FD); }
+  .cardhead{ display:flex; align-items:center; gap:8px; padding:12px 4px 6px; }
+  .chip-label{ font-family:ui-rounded,system-ui; font-weight:800; font-size:15px; letter-spacing:.04em; padding:5px 13px; border-radius:999px; color:#fff; display:inline-flex; gap:6px; align-items:center; }
+  .m .chip-label{ background:var(--peach); } .s .chip-label{ background:var(--lilac); }
+  .prog{ margin-left:auto; font-size:12.5px; font-weight:800; color:var(--purple-deep); background:#fff; padding:4px 11px; border-radius:999px; box-shadow:var(--shadow-sm); font-variant-numeric:tabular-nums; }
+  .subhead{ font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:800; color:var(--ink-soft); margin:12px 6px 6px; display:flex; align-items:center; gap:7px; }
+  .subhead::after{ content:""; flex:1; height:2px; border-radius:2px; background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 10px); }
+  .rows{ display:flex; flex-direction:column; gap:9px; }
+  .row{ display:flex; align-items:center; gap:13px; width:100%; text-align:left; cursor:pointer; font-family:inherit; background:#fff; border:2px solid #fff; border-radius:18px; padding:10px 12px 10px 10px; box-shadow:var(--shadow-sm); transition:transform .12s; touch-action:pan-y; }
+  .row:active{ transform:scale(.98); }
+  .row[data-cyc="1"]{ touch-action:none; }
+  .thumbc{ position:relative; flex:0 0 auto; width:70px; height:70px; display:block; }
+  .thumbwrap{ display:block; width:100%; height:100%; border-radius:16px; background:#fff; border:2px solid var(--lilac-soft); overflow:hidden; }
+  .tw-track{ width:100%; height:100%; display:grid; place-items:center; will-change:transform; transition:transform .2s ease; }
+  .tw-track img{ width:100%; height:100%; object-fit:contain; border-radius:13px; }
+  .thumbwrap.emoji .tw-track{ font-size:36px; }
+  .ordb{ position:absolute; top:-7px; left:-7px; width:21px; height:21px; border-radius:50%; color:#fff; font-size:11px; font-weight:800; display:grid; place-items:center; font-variant-numeric:tabular-nums; border:2px solid #fff; z-index:3; }
+  .m .ordb{ background:var(--peach); } .s .ordb{ background:var(--lilac); }
+  .ordb.opt{ background:#fff; color:var(--lilac); border-color:var(--lilac-soft); }
+  .rinfo{ flex:1; min-width:0; }
+  .rtype{ font-family:ui-rounded,system-ui; font-size:16px; font-weight:800; color:var(--purple-deep); line-height:1.1; }
+  .rwhere{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .altmark{ flex:0 0 auto; width:32px; height:32px; border:none; border-radius:50%; cursor:pointer; background:var(--lilac-soft); color:var(--lilac-ink); font-size:16px; font-weight:800; display:grid; place-items:center; transition:transform .12s; }
+  .altmark:active{ transform:scale(.85) rotate(90deg); }
+  .heart{ flex:0 0 auto; width:34px; height:34px; display:grid; place-items:center; font-size:22px; color:var(--ink-soft); transition:transform .15s; line-height:1; }
+  .row.done{ background:linear-gradient(90deg,var(--pink-soft),#fff); border-color:var(--pink-soft); }
+  .row.done .heart{ color:var(--pink); } .row.done .rtype{ color:var(--pink); } .row.done .thumbwrap img{ opacity:.55; }
+  .row.opt{ border-style:dashed; border-color:var(--lilac-soft); box-shadow:none; background:#FFFDFE; }
+  .row.opt .rtype{ color:var(--lilac-ink); }
+  .row.just .heart{ animation:pop .3s ease; }
+  .row.swin-r .tw-track{ animation:fromRight .34s cubic-bezier(.2,.85,.25,1); }
+  .row.swin-l .tw-track{ animation:fromLeft .34s cubic-bezier(.2,.85,.25,1); }
+  @keyframes fromRight{ from{transform:translateX(74px)} to{transform:none} }
+  @keyframes fromLeft{ from{transform:translateX(-74px)} to{transform:none} }
+  .done-msg{ text-align:center; font-family:ui-rounded,system-ui; font-weight:800; font-size:13.5px; padding:9px; margin:12px 4px 2px; border-radius:14px; color:var(--purple-deep); background:#fff; box-shadow:var(--shadow-sm); }
+  .taskbar{ display:flex; align-items:center; gap:8px; margin-top:18px; background:var(--win); border:2px solid #fff; border-radius:16px; padding:9px 13px; box-shadow:var(--shadow-sm); font-size:12px; font-weight:700; color:var(--ink); }
+  .taskbar .pdot{ width:10px; height:10px; border-radius:50%; background:var(--peach); }
+  .taskbar .sync{ margin-left:auto; font-weight:800; font-size:11px; }
+  .taskbar .sync.ok{ color:var(--lilac-ink); } .taskbar .sync.wait{ color:var(--ink-soft); } .taskbar .sync.err{ color:var(--peach-ink); }
+  footer{ text-align:center; margin-top:16px; font-size:11.5px; color:var(--ink-soft); }
+  @keyframes pop{ 0%{transform:scale(.7)} 55%{transform:scale(1.3)} 100%{transform:scale(1)} }
+  .card{ animation:rise .4s ease both; }
+  @keyframes rise{ from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important;} }
+  .boot{ text-align:center; padding:40px 0; color:var(--purple); font-weight:800; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="spark" style="top:40px;left:6px;">✦</span>
+  <span class="spark" style="top:120px;right:2px;font-size:13px;">♡</span>
+  <span class="spark" style="top:280px;left:-2px;font-size:12px;">⋆</span>
+  <div class="window">
+    <div class="titlebar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="wtitle rounded">♡ glow routine ♡</span>
+      <span class="wbtns">– ▢ ✕</span>
+    </div>
+    <div class="winbody">
+      <div class="hero">
+        <div class="eyebrow">skincare set</div>
+        <h1 class="rounded">Ma routine</h1>
+        <div class="today"><span class="day" id="dayName">—</span><span id="apercu"></span></div>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <main id="app"><div class="boot rounded">chargement…</div></main>
+      <div class="taskbar"><span class="pdot"></span><span class="tdate" id="tbDate">—</span><span class="sync wait" id="sync">·</span></div>
+    </div>
+  </div>
+  <footer>♡ un seul actif par session &nbsp;·&nbsp; sauvegarde auto</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL="https://sfjjmxbutaoloxcrxpsg.supabase.co";
+const SB_KEY="sb_publishable_YRbvPW8QQ7wqhTNWTBWTZQ_1UcApa5B";
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+const IMG={
+  avene:"https://static.beautytocare.com/media/catalog/product/a/v/avene-xeracalm-nutrition-cleansing-gel-100ml.jpg",
+  niacinamide:"https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master/default/dwce8a7cdf/Images/products/The%20Ordinary/rdn-niacinamide-10pct-zinc-1pct-30ml.png?sw=800&sh=800&sm=fit",
+  cerave_lait:"https://africa.cerave.com/en/-/media/Project/Loreal/BrandSites/CeraVe/Master/AfricaHub/English/Product/Moisturizers/CeraVe_MoisturizingLotion_NEW_v021.png",
+  suntique:"https://static.beautytocare.com/cdn-cgi/image/f=auto/media/catalog/product/s/u/suntique-i-m-aqua-sun-essence-spf50-pa-50ml.jpg",
+  biore:"https://sentisenti.com/cdn/shop/products/biore-uv-aqua-rich-water-essence-main-2023-oo35mm.jpg?v=1762458853&width=2048",
+  retinal:"https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master/default/dwa863ca2c/Images/products/The%20Ordinary/ord-retinal-02-emulsion-15ml.png?sw=800&sh=800&sm=fit",
+  glycolic:"https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master/default/dw8b57fa2b/Images/products/The%20Ordinary/ord-glyc-acid-7pct-100ml-Aug-UPC.png?sw=800&sh=800&sm=fit",
+  buffet:"https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master/default/dw68423659/Images/products/The%20Ordinary/rdn-multi-peptide-ha-serum-30ml.png?sw=800&sh=800&sm=fit",
+  aroma:"https://www.beautydecoded.com/wp-content/uploads/2025/12/3-3-2-1024x1024.webp",
+  filorga:"https://fr.filorga.com/cdn/shop/files/fr-3540550015156-meso-mask-ncef-pdp-1.png?v=1748866528",
+  cerave_sa:"https://africa.cerave.com/en/-/media/Project/Loreal/BrandSites/CeraVe/Master/AfricaHub/English/Product/Moisturizers/CeraVe_SA-Rough-BumpyCream_20.png",
+  bumbum:"https://soldejaneiro.com/cdn/shop/files/Brazilian_Bum_Bum_Cream_Sol_de_Janeiro_0.webp?v=1713788113",
+  ledmask:"https://image.darty.com/darty?type=image&source=/market/2025/10/13/28816723_3723_1.jpg&height=319"
+};
+const PRODUCTS={
+  avene:{brand:"Avène",type:"Nettoyant"},
+  niacinamide:{brand:"The Ordinary",type:"Niacinamide"},
+  cerave_lait:{brand:"CeraVe",type:"Hydratant"},
+  suntique:{brand:"Suntique",type:"SPF chimique"},
+  biore:{brand:"Bioré",type:"SPF chimique"},
+  retinal:{brand:"The Ordinary",type:"Rétinal"},
+  glycolic:{brand:"The Ordinary",type:"AHA glycolique"},
+  buffet:{brand:"The Ordinary",type:"Peptides"},
+  aroma:{brand:"Aroma-Zone",type:"AHA peeling"},
+  filorga:{brand:"Filorga",type:"Masque"},
+  castor:{brand:"",type:"Soin cils",emoji:"🌿"},
+  cerave_sa:{brand:"CeraVe",type:"Gommant corps"},
+  bumbum:{brand:"Sol de Janeiro",type:"Crème parfum"},
+  ledmask:{brand:"Luminothérapie",type:"LED rouge"}
+};
+const WHERE={ castor:"cils + sourcils", cerave_sa:"jambes + bras", bumbum:"tout le corps" };
+const ACTIVE={ lun:"retinal",mar:"glycolic",mer:"niacinamide",jeu:"retinal",ven:"buffet",sam:"aroma",dim:"filorga" };
+const EVE=["retinal","glycolic","aroma","niacinamide","buffet","filorga"];
+const ACTMAP={retinal:"Rétinal",glycolic:"AHA glycolique",aroma:"AHA Aroma-Zone",niacinamide:"Niacinamide",buffet:"Buffet",filorga:"Masque"};
+const SPFMAP={suntique:"Suntique",biore:"Bioré"};
+const DAYS=[{id:"lun",short:"Lu",full:"Lundi"},{id:"mar",short:"Ma",full:"Mardi"},{id:"mer",short:"Me",full:"Mercredi"},{id:"jeu",short:"Je",full:"Jeudi"},{id:"ven",short:"Ve",full:"Vendredi"},{id:"sam",short:"Sa",full:"Samedi"},{id:"dim",short:"Di",full:"Dimanche"}];
+const JS2ID=["dim","lun","mar","mer","jeu","ven","sam"];
+function slotsFor(day){ return {
+  matin:{ visage:[{f:"avene"},{f:"ledmask",opt:true},{f:"niacinamide"},{f:"cerave_lait"},{c:["suntique","biore"],plan:"spf",def:"suntique"}], corps:[{f:"bumbum"}] },
+  soir:{ visage:[{f:"avene"},{c:EVE,plan:"active_"+day,def:ACTIVE[day]},{f:"cerave_lait"},{f:"castor"}], corps:[{f:"cerave_sa"},{f:"cerave_lait"}] } }; }
+
+const todayId=JS2ID[new Date().getDay()];
+const dateKey=new Date().toISOString().slice(0,10);
+let selected=todayId, justId=null, swapId=null, swapDir=1;
+let plan={}, store={date:dateKey,done:{}};
+
+function setSync(state){ const el=document.getElementById("sync"); if(!el)return;
+  el.className="sync "+(state==="ok"?"ok":state==="err"?"err":"wait");
+  el.textContent = state==="ok"?"enregistré ✓":state==="err"?"hors ligne (local)":"…"; }
+
+// cache local de secours
+function cacheSave(){ try{ localStorage.setItem("glow_cache_"+dateKey, JSON.stringify(store.done)); localStorage.setItem("glow_cache_plan", JSON.stringify(plan)); }catch(e){} }
+function cacheLoad(){ try{ store.done=JSON.parse(localStorage.getItem("glow_cache_"+dateKey)||"{}"); plan=JSON.parse(localStorage.getItem("glow_cache_plan")||"{}"); }catch(e){ store.done={}; plan={}; } }
+
+function sKey(s){ return s.f || (plan[s.plan]||s.def); }
+function sId(session,s){ return session+"-"+(s.f||s.plan); }
+function whereFor(session,key){ if(key==="cerave_lait"&&(session==="corps-m"||session==="corps-s"))return "tout le corps"; return WHERE[key]||""; }
+
+function computeDerived(){
+  const S=slotsFor(todayId);
+  const actKey=plan["active_"+todayId]||ACTIVE[todayId];
+  const allDone=(l,se)=>l.filter(x=>!x.opt).every(x=>store.done[sId(se,x)]);
+  return {
+    actif: ACTMAP[actKey]||null,
+    matin_ok: allDone(S.matin.visage,"matin")&&allDone(S.matin.corps,"corps-m"),
+    soir_ok: allDone(S.soir.visage,"soir")&&allDone(S.soir.corps,"corps-s"),
+    spf: SPFMAP[plan["spf"]||"suntique"],
+    led: !!store.done["matin-ledmask"]
+  };
+}
+let saveT=null;
+function saveDay(){ cacheSave(); setSync("wait"); clearTimeout(saveT); saveT=setTimeout(async()=>{
+  try{ const d=computeDerived();
+    const {error}=await sb.from("glow_days").upsert({date:dateKey,checks:store.done,actif:d.actif,matin_ok:d.matin_ok,soir_ok:d.soir_ok,spf:d.spf,led:d.led,updated_at:new Date().toISOString()},{onConflict:"date"});
+    setSync(error?"err":"ok");
+  }catch(e){ setSync("err"); }
+},450); }
+async function savePlan(){ cacheSave(); setSync("wait");
+  try{ const {error}=await sb.from("glow_plan").upsert({id:1,data:plan,updated_at:new Date().toISOString()},{onConflict:"id"}); setSync(error?"err":"ok"); }
+  catch(e){ setSync("err"); } }
+
+function rowHTML(session,s,num,interactive){
+  const id=sId(session,s), key=sKey(s), p=PRODUCTS[key], done=interactive&&store.done[id];
+  const cyc=interactive&&s.c&&s.c.length>1;
+  const inner=IMG[key]?`<img src="${IMG[key]}" alt="${p.brand}" loading="lazy">`:(p.emoji||"🧴");
+  const badge=num!==null?`<span class="ordb">${num}</span>`:`<span class="ordb opt">✦</span>`;
+  const pic=`<span class="thumbc">${badge}<span class="thumbwrap ${IMG[key]?"":"emoji"}"><span class="tw-track">${inner}</span></span></span>`;
+  const sub=s.opt?"facultatif":(whereFor(session,key)||p.brand||"");
+  const heart=done?"♥":"♡"; const optc=s.opt?" opt":"";
+  if(!interactive) return `<div class="row${optc}">${pic}<div class="rinfo"><div class="rtype">${p.type}</div><div class="rwhere">${sub}</div></div><span class="heart">${heart}</span></div>`;
+  const alt=cyc?`<button class="altmark" aria-label="Changer">⇄</button>`:"";
+  const sc=swapId===id?(swapDir<0?" swin-l":" swin-r"):"";
+  return `<div class="row${optc} ${done?"done":""}${justId===id?" just":""}${sc}" data-id="${id}" data-cyc="${cyc?1:0}"${cyc?` data-plan="${s.plan}" data-opts="${s.c.join(",")}" data-def="${s.def}"`:""} role="button" tabindex="0" aria-pressed="${done?"true":"false"}">${pic}<div class="rinfo"><div class="rtype">${p.type}</div><div class="rwhere">${sub}</div></div>${alt}<span class="heart">${heart}</span></div>`;
+}
+function cardHTML(kind,S,interactive){
+  const isM=kind==="matin",cls=isM?"m":"s",session=isM?"matin":"soir",cSession=isM?"corps-m":"corps-s";
+  let total=0,done=0;
+  if(interactive){ S.visage.forEach(s=>{if(!s.opt){total++;if(store.done[sId(session,s)])done++;}}); S.corps.forEach(s=>{if(!s.opt){total++;if(store.done[sId(cSession,s)])done++;}}); }
+  let nv=0; const vis=S.visage.map(s=>rowHTML(session,s,s.opt?null:(++nv),interactive)).join("");
+  let nc=0; const cor=S.corps.map(s=>rowHTML(cSession,s,s.opt?null:(++nc),interactive)).join("");
+  const prog=interactive?`<span class="prog">♡ ${done}/${total}</span>`:"";
+  const msg=(interactive&&done===total)?`<div class="done-msg">${isM?"prête pour la journée ✧":"peau au repos, bonne nuit ✧"}</div>`:"";
+  return `<section class="card ${cls}"><div class="cardhead"><span class="chip-label rounded">${isM?"☀︎ Matin":"☾ Soir"}</span>${prog}</div><div class="subhead">Visage</div><div class="rows">${vis}</div><div class="subhead">Corps</div><div class="rows">${cor}</div>${msg}</section>`;
+}
+function cycleEl(el,dir){ const opts=el.dataset.opts.split(","),pk=el.dataset.plan,def=el.dataset.def; let cur=plan[pk]||def,i=opts.indexOf(cur); i=(i+dir+opts.length)%opts.length; plan[pk]=opts[i]; swapId=el.dataset.id; swapDir=dir; justId=null; savePlan(); render(); }
+function checkId(id){ store.done[id]=!store.done[id]; justId=store.done[id]?id:null; swapId=null; saveDay(); render(); }
+function bind(){
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{selected=b.dataset.day;justId=null;swapId=null;render();});
+  document.querySelectorAll(".altmark").forEach(b=>b.addEventListener("click",e=>{ e.stopPropagation(); cycleEl(b.closest(".row"),1); }));
+  document.querySelectorAll(".row[data-id]").forEach(b=>{
+    const cyc=b.dataset.cyc==="1", tw=b.querySelector(".tw-track");
+    let sx=0,sy=0,ly=0,dir=null,drag=false,sw=false;
+    const reset=()=>{ if(tw){ tw.style.transition=""; tw.style.transform=""; } };
+    b.addEventListener("pointerdown",e=>{ if(e.pointerType==="mouse"&&e.button!==0)return; sx=e.clientX;sy=e.clientY;ly=e.clientY;dir=null;drag=true;sw=false; if(cyc&&tw)tw.style.transition="none"; if(cyc){try{b.setPointerCapture(e.pointerId);}catch(_){}}});
+    b.addEventListener("pointermove",e=>{ if(!drag||!cyc)return; const dx=e.clientX-sx,dy=e.clientY-sy;
+      if(dir===null&&(Math.abs(dx)>7||Math.abs(dy)>7))dir=Math.abs(dx)>Math.abs(dy)?"h":"v";
+      if(dir==="h"){ if(tw){const v=Math.max(-92,Math.min(92,dx));tw.style.transform="translateX("+v+"px)";} }
+      else if(dir==="v"){ window.scrollBy(0,ly-e.clientY); ly=e.clientY; } });
+    b.addEventListener("pointerup",e=>{ drag=false; if(cyc){ try{b.releasePointerCapture(e.pointerId);}catch(_){} const dx=e.clientX-sx; if(dir!==null)sw=true; if(dir==="h"&&Math.abs(dx)>42)cycleEl(b,dx<0?1:-1); else reset(); } });
+    b.addEventListener("pointercancel",()=>{ drag=false; if(cyc)reset(); });
+    b.addEventListener("click",()=>{ if(sw){sw=false;return;} checkId(b.dataset.id); });
+    b.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); checkId(b.dataset.id);} });
+  });
+}
+function render(){
+  const day=DAYS.find(d=>d.id===selected), interactive=selected===todayId;
+  document.getElementById("dayName").textContent=day.full;
+  document.getElementById("apercu").innerHTML=interactive?"":` <span class="ap">· aperçu</span>`;
+  document.getElementById("tabs").innerHTML=DAYS.map(d=>`<button class="tab ${d.id===selected?"active":""} ${d.id===todayId?"today":""}" data-day="${d.id}">${d.short}</button>`).join("");
+  const S=slotsFor(selected);
+  document.getElementById("app").innerHTML=cardHTML("matin",S.matin,interactive)+cardHTML("soir",S.soir,interactive);
+  document.getElementById("tbDate").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  bind();
+}
+async function boot(){
+  cacheLoad(); // affiche vite le cache
+  try{
+    const [{data:pd},{data:dd}]=await Promise.all([
+      sb.from("glow_plan").select("data").eq("id",1).maybeSingle(),
+      sb.from("glow_days").select("checks").eq("date",dateKey).maybeSingle()
+    ]);
+    if(pd&&pd.data)plan=pd.data;
+    if(dd&&dd.checks)store.done=dd.checks;
+    setSync("ok");
+  }catch(e){ setSync("err"); }
+  render();
+}
+boot();
+</script>
+</body>
+</html>
