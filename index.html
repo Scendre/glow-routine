@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Glow">
 <meta name="theme-color" content="#FBD8D2">
 <title>Ma routine glow</title>
@@ -23,7 +25,7 @@
   }
   body{ font-family:system-ui,-apple-system,sans-serif; color:var(--ink);
     background:radial-gradient(120% 80% at 15% 0%, var(--bg3), transparent 60%),linear-gradient(160deg, var(--bg1), var(--bg2));
-    background-attachment:fixed; min-height:100vh; padding:16px 12px 34px; -webkit-font-smoothing:antialiased; position:relative; overflow-x:hidden; }
+    background-attachment:fixed; min-height:100vh; padding:calc(14px + env(safe-area-inset-top)) 12px calc(34px + env(safe-area-inset-bottom)); -webkit-font-smoothing:antialiased; position:relative; overflow-x:hidden; }
   body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.10;
     background-image:linear-gradient(var(--lilac) 1px,transparent 1px),linear-gradient(90deg,var(--lilac) 1px,transparent 1px);
     background-size:26px 26px; -webkit-mask:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent); mask:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent); }
