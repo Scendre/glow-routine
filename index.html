@@ -158,8 +158,16 @@ function slotsFor(day){ return {
   matin:{ visage:[{f:"avene"},{f:"ledmask",opt:true},{f:"niacinamide"},{f:"cerave_lait"},{c:["suntique","biore"],plan:"spf",def:"suntique"}], corps:[{f:"bumbum"}] },
   soir:{ visage:[{f:"avene"},{c:EVE,plan:"active_"+day,def:ACTIVE[day]},{f:"cerave_lait"},{f:"castor"}], corps:[{f:"cerave_sa"},{f:"cerave_lait"}] } }; }
 
-const todayId=JS2ID[new Date().getDay()];
-const dateKey=new Date().toISOString().slice(0,10);
+// Jour "effectif" : avant 5h du matin, on est encore sur la journée de la veille
+// (Sandra fait parfois sa routine du soir après minuit -> elle doit pouvoir cocher hier)
+const GRACE_H=5;
+const _now=new Date();
+const effDate=new Date(_now.getFullYear(),_now.getMonth(),_now.getDate());
+const nightShift=_now.getHours()<GRACE_H;
+if(nightShift) effDate.setDate(effDate.getDate()-1);
+const pad2=n=>String(n).padStart(2,"0");
+const todayId=JS2ID[effDate.getDay()];
+const dateKey=effDate.getFullYear()+"-"+pad2(effDate.getMonth()+1)+"-"+pad2(effDate.getDate());
 let selected=todayId, justId=null, swapId=null, swapDir=1;
 let plan={}, store={date:dateKey,done:{}};
 
@@ -244,11 +252,11 @@ function bind(){
 function render(){
   const day=DAYS.find(d=>d.id===selected), interactive=selected===todayId;
   document.getElementById("dayName").textContent=day.full;
-  document.getElementById("apercu").innerHTML=interactive?"":` <span class="ap">· aperçu</span>`;
+  document.getElementById("apercu").innerHTML=interactive?(nightShift?` <span class="ap">· soirée</span>`:""):` <span class="ap">· aperçu</span>`;
   document.getElementById("tabs").innerHTML=DAYS.map(d=>`<button class="tab ${d.id===selected?"active":""} ${d.id===todayId?"today":""}" data-day="${d.id}">${d.short}</button>`).join("");
   const S=slotsFor(selected);
   document.getElementById("app").innerHTML=cardHTML("matin",S.matin,interactive)+cardHTML("soir",S.soir,interactive);
-  document.getElementById("tbDate").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  document.getElementById("tbDate").textContent=effDate.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})+(nightShift?" · nuit":"");
   bind();
 }
 async function boot(){
