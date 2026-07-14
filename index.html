@@ -53,6 +53,18 @@
   .card{ border:2px solid #fff; border-radius:22px; box-shadow:var(--shadow-sm); padding:6px 12px 14px; margin-top:16px; }
   .card.m{ background:linear-gradient(180deg,var(--peach-soft),#FFF7F3); }
   .card.s{ background:linear-gradient(180deg,var(--lilac-soft),#F9F6FD); }
+  .card.e{ background:linear-gradient(180deg,var(--pink-soft),#FFF7FB); }
+  .e .chip-label{ background:var(--pink); }
+  .epil-add{ margin-left:auto; border:none; cursor:pointer; width:32px; height:32px; border-radius:50%; background:var(--pink); color:#fff; font-size:22px; font-weight:800; box-shadow:var(--shadow-sm); display:grid; place-items:center; line-height:1; transition:transform .12s; }
+  .epil-add:active{ transform:scale(.85); }
+  .erow{ display:flex; align-items:center; gap:11px; background:#fff; border:2px solid #fff; border-radius:18px; padding:9px 11px; box-shadow:var(--shadow-sm); }
+  .ethumb{ flex:0 0 auto; width:40px; height:40px; border-radius:14px; background:var(--pink-soft); color:var(--pink); display:grid; place-items:center; font-size:20px; }
+  .esel{ flex:1; min-width:0; font-family:ui-rounded,system-ui,sans-serif; font-weight:800; font-size:15px; color:var(--purple-deep); background:#fff; border:2px solid var(--lilac-soft); border-radius:12px; padding:9px 10px; -webkit-appearance:menulist; appearance:menulist; }
+  .edel{ flex:0 0 auto; width:32px; height:32px; border:none; border-radius:50%; background:var(--lilac-soft); color:var(--lilac-ink); font-size:13px; font-weight:800; cursor:pointer; }
+  .edel:active{ transform:scale(.85); }
+  .eempty{ text-align:center; color:var(--ink-soft); font-weight:800; font-size:12.5px; padding:12px; }
+  .echips{ display:flex; flex-wrap:wrap; gap:7px; padding:6px 4px 8px; }
+  .echip{ background:#fff; border:2px solid var(--pink-soft); color:var(--pink); font-weight:800; font-size:12.5px; padding:5px 12px; border-radius:999px; }
   .cardhead{ display:flex; align-items:center; gap:8px; padding:12px 4px 6px; }
   .chip-label{ font-family:ui-rounded,system-ui; font-weight:800; font-size:15px; letter-spacing:.04em; padding:5px 13px; border-radius:999px; color:#fff; display:inline-flex; gap:6px; align-items:center; }
   .m .chip-label{ background:var(--peach); } .s .chip-label{ background:var(--lilac); }
@@ -169,15 +181,16 @@ const pad2=n=>String(n).padStart(2,"0");
 const todayId=JS2ID[effDate.getDay()];
 const dateKey=effDate.getFullYear()+"-"+pad2(effDate.getMonth()+1)+"-"+pad2(effDate.getDate());
 let selected=todayId, justId=null, swapId=null, swapDir=1;
-let plan={}, store={date:dateKey,done:{}};
+let plan={}, store={date:dateKey,done:{},epil:[]};
+const EPIL_OPTS=["Sourcils","Corps","Moustache"];
 
 function setSync(state){ const el=document.getElementById("sync"); if(!el)return;
   el.className="sync "+(state==="ok"?"ok":state==="err"?"err":"wait");
   el.textContent = state==="ok"?"enregistré ✓":state==="err"?"hors ligne (local)":"…"; }
 
 // cache local de secours
-function cacheSave(){ try{ localStorage.setItem("glow_cache_"+dateKey, JSON.stringify(store.done)); localStorage.setItem("glow_cache_plan", JSON.stringify(plan)); }catch(e){} }
-function cacheLoad(){ try{ store.done=JSON.parse(localStorage.getItem("glow_cache_"+dateKey)||"{}"); plan=JSON.parse(localStorage.getItem("glow_cache_plan")||"{}"); }catch(e){ store.done={}; plan={}; } }
+function cacheSave(){ try{ localStorage.setItem("glow_cache_"+dateKey, JSON.stringify(store.done)); localStorage.setItem("glow_epil_"+dateKey, JSON.stringify(store.epil)); localStorage.setItem("glow_cache_plan", JSON.stringify(plan)); }catch(e){} }
+function cacheLoad(){ try{ store.done=JSON.parse(localStorage.getItem("glow_cache_"+dateKey)||"{}"); store.epil=JSON.parse(localStorage.getItem("glow_epil_"+dateKey)||"[]"); plan=JSON.parse(localStorage.getItem("glow_cache_plan")||"{}"); }catch(e){ store.done={}; store.epil=[]; plan={}; } }
 
 function sKey(s){ return s.f || (plan[s.plan]||s.def); }
 function sId(session,s){ return session+"-"+(s.f||s.plan); }
@@ -198,7 +211,8 @@ function computeDerived(){
 let saveT=null;
 function saveDay(){ cacheSave(); setSync("wait"); clearTimeout(saveT); saveT=setTimeout(async()=>{
   try{ const d=computeDerived();
-    const {error}=await sb.from("glow_days").upsert({date:dateKey,checks:store.done,actif:d.actif,matin_ok:d.matin_ok,soir_ok:d.soir_ok,spf:d.spf,led:d.led,updated_at:new Date().toISOString()},{onConflict:"date"});
+    const epil=store.epil.filter(Boolean);
+    const {error}=await sb.from("glow_days").upsert({date:dateKey,checks:{...store.done,_epil:epil},actif:d.actif,matin_ok:d.matin_ok,soir_ok:d.soir_ok,spf:d.spf,led:d.led,updated_at:new Date().toISOString()},{onConflict:"date"});
     setSync(error?"err":"ok");
   }catch(e){ setSync("err"); }
 },450); }
@@ -229,10 +243,27 @@ function cardHTML(kind,S,interactive){
   const msg=(interactive&&done===total)?`<div class="done-msg">${isM?"prête pour la journée ✧":"peau au repos, bonne nuit ✧"}</div>`:"";
   return `<section class="card ${cls}"><div class="cardhead"><span class="chip-label rounded">${isM?"☀︎ Matin":"☾ Soir"}</span>${prog}</div><div class="subhead">Visage</div><div class="rows">${vis}</div><div class="subhead">Corps</div><div class="rows">${cor}</div>${msg}</section>`;
 }
+function epilCardHTML(interactive){
+  if(!interactive){
+    const chips=store.epil.filter(Boolean);
+    const body=chips.length?chips.map(z=>`<span class="echip">✿ ${z}</span>`).join(""):`<span class="eempty">—</span>`;
+    return `<section class="card e"><div class="cardhead"><span class="chip-label rounded">✿ Épilation</span></div><div class="echips">${body}</div></section>`;
+  }
+  const rows=store.epil.map((v,i)=>{
+    const opts=['<option value="">choisir…</option>'].concat(EPIL_OPTS.map(o=>`<option ${o===v?"selected":""}>${o}</option>`)).join("");
+    return `<div class="erow"><span class="ethumb">✿</span><select class="esel" data-i="${i}">${opts}</select><button class="edel" data-i="${i}" aria-label="Retirer">✕</button></div>`;
+  }).join("");
+  const empty=store.epil.length?"":`<div class="eempty rounded">rien pour l'instant</div>`;
+  return `<section class="card e"><div class="cardhead"><span class="chip-label rounded">✿ Épilation</span><button class="epil-add rounded" id="epilAdd" aria-label="Ajouter">+</button></div><div class="rows">${rows}${empty}</div></section>`;
+}
 function cycleEl(el,dir){ const opts=el.dataset.opts.split(","),pk=el.dataset.plan,def=el.dataset.def; let cur=plan[pk]||def,i=opts.indexOf(cur); i=(i+dir+opts.length)%opts.length; plan[pk]=opts[i]; swapId=el.dataset.id; swapDir=dir; justId=null; savePlan(); render(); }
 function checkId(id){ store.done[id]=!store.done[id]; justId=store.done[id]?id:null; swapId=null; saveDay(); render(); }
 function bind(){
   document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{selected=b.dataset.day;justId=null;swapId=null;render();});
+  const eadd=document.getElementById("epilAdd");
+  if(eadd) eadd.onclick=()=>{ store.epil.push(""); saveDay(); render(); };
+  document.querySelectorAll(".esel").forEach(s=>s.addEventListener("change",()=>{ store.epil[+s.dataset.i]=s.value; saveDay(); render(); }));
+  document.querySelectorAll(".edel").forEach(b=>b.addEventListener("click",()=>{ store.epil.splice(+b.dataset.i,1); saveDay(); render(); }));
   document.querySelectorAll(".altmark").forEach(b=>b.addEventListener("click",e=>{ e.stopPropagation(); cycleEl(b.closest(".row"),1); }));
   document.querySelectorAll(".row[data-id]").forEach(b=>{
     const cyc=b.dataset.cyc==="1", tw=b.querySelector(".tw-track");
@@ -255,7 +286,7 @@ function render(){
   document.getElementById("apercu").innerHTML=interactive?(nightShift?` <span class="ap">· soirée</span>`:""):` <span class="ap">· aperçu</span>`;
   document.getElementById("tabs").innerHTML=DAYS.map(d=>`<button class="tab ${d.id===selected?"active":""} ${d.id===todayId?"today":""}" data-day="${d.id}">${d.short}</button>`).join("");
   const S=slotsFor(selected);
-  document.getElementById("app").innerHTML=cardHTML("matin",S.matin,interactive)+cardHTML("soir",S.soir,interactive);
+  document.getElementById("app").innerHTML=cardHTML("matin",S.matin,interactive)+cardHTML("soir",S.soir,interactive)+epilCardHTML(interactive);
   document.getElementById("tbDate").textContent=effDate.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})+(nightShift?" · nuit":"");
   bind();
 }
@@ -267,7 +298,7 @@ async function boot(){
       sb.from("glow_days").select("checks").eq("date",dateKey).maybeSingle()
     ]);
     if(pd&&pd.data)plan=pd.data;
-    if(dd&&dd.checks)store.done=dd.checks;
+    if(dd&&dd.checks){ const c={...dd.checks}; if(Array.isArray(c._epil))store.epil=c._epil; delete c._epil; store.done=c; }
     setSync("ok");
   }catch(e){ setSync("err"); }
   render();
